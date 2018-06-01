@@ -118,7 +118,6 @@ class Ratings(Resource):
         return self.ratings
 
 
-api.add_resource(Players, '/players')
 api.add_resource(Matches, '/matches')
 api.add_resource(Ratings, '/ratings')
 
