@@ -1,0 +1,4 @@
+<!doctype html>
+{% for n in range(ratings|length) %}
+<h1>{{ n+1 }}. {{ ratings[n][0] }} ({{ ratings[n][1] }})</h1>
+{% endfor %}
