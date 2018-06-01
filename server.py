@@ -31,24 +31,6 @@ api = Api(app)
 CORS(app)
 
 
-class Players(Resource):
-    def get(self):
-        conn = db.connect()
-        s = select([players])
-        result = conn.execute(s)
-        return {'players': [dict(row) for row in result]}
-
-    post_parser = reqparse.RequestParser()
-    post_parser.add_argument('name', required=True)
-
-    def post(self):
-        conn = db.connect()
-        name = request.form['name']
-        ins = players.insert().values(name=name, rating=1200)
-        result = conn.execute(ins)
-        return {'result': dict(result)}
-
-
 class Matches(Resource):
     def get(self):
         conn = db.connect()
