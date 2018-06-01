@@ -1,5 +1,5 @@
-from flask import Flask, request, render_template
-from flask_restful import Resource, Api, reqparse
+from flask import Flask, render_template
+from flask_restful import Resource, Api, reqparse, inputs
 from flask_cors import CORS
 from sqlalchemy import create_engine, select
 from sqlalchemy import Table, Column, Integer, String, MetaData
@@ -27,6 +27,7 @@ matches = Table('matches', metadata,
 metadata.create_all(db)
 
 app = Flask(__name__)
+app.config['BUNDLE_ERRORS'] = True
 api = Api(app)
 CORS(app)
 
@@ -38,13 +39,26 @@ class Matches(Resource):
         result = conn.execute(s)
         return {'matches': [dict(row) for row in result]}
 
+    name_options = {
+        'type': inputs.regex('^.+$'),
+        'help': "Must not be empty",
+        'required': True,
+        'nullable': False
+    }
+
+    score_options = {
+        'type': inputs.int_range(0, 10),
+        'required': True,
+        'nullable': False
+    }
+
     post_parser = reqparse.RequestParser()
-    post_parser.add_argument('a_off', required=True)
-    post_parser.add_argument('a_def', required=True)
-    post_parser.add_argument('a_score', required=True)
-    post_parser.add_argument('b_off', required=True)
-    post_parser.add_argument('b_def', required=True)
-    post_parser.add_argument('b_score', required=True)
+    post_parser.add_argument('a_off', **name_options)
+    post_parser.add_argument('a_def', **name_options)
+    post_parser.add_argument('a_score', **score_options)
+    post_parser.add_argument('b_off', **name_options)
+    post_parser.add_argument('b_def', **name_options)
+    post_parser.add_argument('b_score', **score_options)
 
     def post(self):
         conn = db.connect()
